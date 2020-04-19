@@ -1,0 +1,9 @@
+.calendar {
+    .week {
+        .day {
+            &.active {
+                background-color: green;
+            }
+        }
+    }
+}

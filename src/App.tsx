@@ -1,24 +1,38 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import './App.scss';
+import 'semantic-ui-css/semantic.min.css';
+import AppHeader from './components/AppHeader/AppHeader';
+import ApiKeyInput from './components/ApiKeyInput/ApiKeyInput';
+import Stats from './components/Stats/Stats';
+import WanikaniApi from './utils/WanikaniApi';
+import { WanikaniUser } from './types/Wanikani';
 
 function App() {
+  const [apiKey, setApiKey] = useState();
+  const [user, setUser] = useState<WanikaniUser>();
+
+  const onApiKeyClick = (apiKeyValue: string) => {
+    setApiKey(apiKeyValue);
+  };
+
+  useEffect(() => {  
+    if (apiKey) {
+      const getUser = async () => {
+        const user: WanikaniUser = await WanikaniApi.getUser(apiKey);
+        setUser(user);
+      }
+
+      getUser();
+    }
+  }, [apiKey]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <AppHeader user={ user! } />
+      <ApiKeyInput onApiKeyClick={ onApiKeyClick } />
+      {
+        user && <Stats apiKey={ apiKey } user={ user } />
+      }
     </div>
   );
 }
