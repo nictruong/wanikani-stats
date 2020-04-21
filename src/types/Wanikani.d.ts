@@ -2,6 +2,7 @@ export interface WanikaniObjet {
     object: string;
     url: string;
     data_updated_at: string;
+    pages?: WanikaniPages;
 }
 
 export interface WanikaniUser extends WanikaniUserData, WanikaniObjet {
@@ -41,8 +42,8 @@ export enum LessonsPresentationOrder {
     ASCENDING_LEVEL_THEN_SHUFFLED = 'ascending_level_then_shuffled',
 }
 
-export interface WanikaniReview extends WanikaniObjet {
-    data: WanikaniReviewData
+export interface WanikaniReview extends WanikaniObjet, WanikaniPages {
+    data: WanikaniReviewData;
 }
 
 export interface WanikaniReviewData {
@@ -55,4 +56,36 @@ export interface WanikaniReviewData {
     ending_srs_stage_name: string;
     incorrect_meaning_answers: number;
     incorrect_reading_answers: number;
+}
+
+export interface WanikaniReviewStatisticObject extends WanikaniObjet {
+    total_count: number;
+    data: WanikaniReviewStatistic;
+}
+
+export interface WanikaniReviewStatistic extends WanikaniObjet {
+    id: string;
+    data: WanikaniReviewStatisticData;
+}
+
+export interface WanikaniReviewStatisticData extends WanikaniObject {
+    created_at: string;
+    subject_id: number;
+    subject_type: string;
+    meaning_correct: number;
+    meaning_incorrect: number;
+    meaning_max_streak: number;
+    meaning_current_streak: number;
+    reading_correct: number;
+    reading_incorrect: number;
+    reading_max_streak: number;
+    reading_current_streak: number;
+    percentage_correct: number;
+    hidden: boolean;
+}
+
+export interface WanikaniPages {
+    per_page: number;
+    next_url: string;
+    previous_url: string;
 }

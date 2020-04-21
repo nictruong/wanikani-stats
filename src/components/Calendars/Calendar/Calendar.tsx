@@ -24,9 +24,9 @@ const Calendar: React.FC<CalendarProps> = ({
         let tempDate = 1;
 
         return (
-            <div>
+            <div  className='calendar'>
                 <div>{`${date.format('MMMM')} ${currentYear}`}</div>
-                <table className='calendar'>
+                <table>
                     <tbody>
                         {
                             Array.from(Array(6).keys()).map((_, i: number) => {
@@ -36,7 +36,7 @@ const Calendar: React.FC<CalendarProps> = ({
                                             Array.from(Array(7).keys())
                                                 .map((_, j: number) => {
                                                     if (i === 0 && j < firstDay) {
-                                                        return <td key={`${i}-${j}`}>-</td>
+                                                        return <td key={`${i}-${j}`}></td>
                                                     } else if (tempDate > daysInMonth) {
                                                         return 'delete'
                                                     } else {
@@ -59,13 +59,21 @@ const Calendar: React.FC<CalendarProps> = ({
                                                             });
                                                         }
 
+                                                        let threshold: string = '';
+
+                                                        if (stats?.total > 0 && stats?.total < 50) {
+                                                            threshold = 'medium';
+                                                        } else if (stats?.total >= 50) {
+                                                            threshold = 'high'
+                                                        }
+
                                                         return (
                                                             <Popup
                                                                 on='click'
                                                                 key={`${i}-${j}`}
                                                                 trigger={
                                                                     <td 
-                                                                        className={reviewsByDate[dateString] ? 'active day' : 'day'}
+                                                                        className={`${threshold} day`}
                                                                     >
                                                                         {tempDate - 1}
                                                                     </td>

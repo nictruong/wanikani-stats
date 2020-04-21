@@ -1,7 +1,16 @@
 .calendar {
+    padding-right: 2.5px;
+    padding-left: 2.5px;
+
     .week {
         .day {
-            &.active {
+            text-align: center;
+
+            &.medium {
+                background-color: yellow;
+            }
+
+            &.high {
                 background-color: green;
             }
         }

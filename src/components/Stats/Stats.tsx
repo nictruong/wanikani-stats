@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Grid, Segment, Statistic, Container } from 'semantic-ui-react';
-import { WanikaniUser, WanikaniReview } from '../../types/Wanikani';
+import { WanikaniUser, WanikaniReview, WanikaniReviewStatisticObject, WanikaniReviewStatistic } from '../../types/Wanikani';
 import WanikaniApi from '../../utils/WanikaniApi';
 import Calendars from '../Calendars/Calendars';
+import WeakItems from '../WeakItems/WeakItems';
 
 type StatsProps = {
     apiKey: string,
@@ -14,10 +15,12 @@ const Stats: React.FC<StatsProps> = ({
     user,
 }) => {
     const [reviews, setReviews] = useState<WanikaniReview[]>([]);
+    const [reviewStatistics, setReviewStatistic] = useState<WanikaniReviewStatistic[]>([]);
 
     useEffect(() => {
         if (apiKey) {
-            let reviewsCumul: any[] = [];
+            let reviewsCumul: WanikaniReview[] = [];
+            let reviewStatisticCumul: WanikaniReviewStatistic[] = [];
             const getReviews = async (url: string | undefined = undefined) => {
                 const reviewsObject = await WanikaniApi.getReviews(apiKey, url);
 
@@ -32,8 +35,24 @@ const Stats: React.FC<StatsProps> = ({
                     getReviews(nextUrl);
                 }
             }
+
+            const getReviewStatistics = async (url: string | undefined = undefined) => {
+                const reviewStatisticsObject: WanikaniReviewStatisticObject = await WanikaniApi.getReviewStatistics(apiKey, url);
+
+                if (Array.isArray(reviewStatisticsObject.data)) {
+                    reviewStatisticCumul = [...reviewStatisticCumul, ...reviewStatisticsObject.data];
+                    setReviewStatistic(reviewStatisticCumul);
+                }
+
+                const nextUrl = reviewStatisticsObject?.pages?.next_url;
+
+                if (nextUrl) {
+                    getReviewStatistics(nextUrl);
+                }
+            }
     
             getReviews();
+            getReviewStatistics();
         }
     }, [apiKey]);
 
@@ -59,6 +78,13 @@ const Stats: React.FC<StatsProps> = ({
                         <Grid.Column>
                             <Segment>
                                 <Calendars reviews={ reviews } />
+                            </Segment>
+                        </Grid.Column>
+                    </Grid.Row>
+                    <Grid.Row>
+                        <Grid.Column>
+                            <Segment>
+                                <WeakItems apiKey={ apiKey } reviewStatistics={ reviewStatistics } />
                             </Segment>
                         </Grid.Column>
                     </Grid.Row>
